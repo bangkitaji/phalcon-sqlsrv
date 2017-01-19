@@ -24,8 +24,8 @@ use Phalcon\Db\Result\PdoSqlsrv as ResultPdo;
 class Sqlsrv extends \Phalcon\Db\Adapter\Pdo implements \Phalcon\Db\AdapterInterface
 {
 
-    protected $_type = 'sqlsrv';
-    protected $_dialectType = 'sqlsrv';
+    protected $_type = 'Sqlsrv';
+    protected $_dialectType = 'Sqlsrv';
 
     /**
      * This method is automatically called in Phalcon\Db\Adapter\Pdo constructor.
@@ -35,7 +35,7 @@ class Sqlsrv extends \Phalcon\Db\Adapter\Pdo implements \Phalcon\Db\AdapterInter
      *
      * @return bool
      */
-    public function connect($descriptor = null)
+    public function connect(array $descriptor = null)
     {
         if (is_null($descriptor) === true) {
             $descriptor = $this->_descriptor;
