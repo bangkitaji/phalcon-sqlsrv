@@ -11,3 +11,8 @@ $di->set('db', function() use ($config) {
 });
 
 ```
+
+- Issue
+
+It will crash if you use shared lock. See more look at nolock branch.
+
