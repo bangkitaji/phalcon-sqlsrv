@@ -73,7 +73,8 @@ class Sqlsrv extends \Phalcon\Db\Dialect
      */
     public function sharedLock($sqlQuery)
     {
-        return $sqlQuery.' WITH (NOLOCK) ';
+        //return $sqlQuery.' WITH (NOLOCK) '; it is not correct for shared lock, and it will crash.
+        return $sqlQuery;
     }
 
     /**
@@ -847,5 +848,98 @@ class Sqlsrv extends \Phalcon\Db\Dialect
         }
 
         return $sql;
+    }
+
+    /**
+      * Builds a SELECT statement
+      * Note: overide select function for make no lock hint as default
+      */
+    public function select(array $definition) 
+    {
+        //var tables, columns, sql, distinct, joins, where, escapeChar, groupBy, having, orderBy, limit, forUpdate, bindCounts;
+        $tables = "";
+        $sql = "";
+
+        if (isset($definition["tables"])) {
+            $tables = $definition["tables"];
+        } else {
+            throw new Exception("The index 'tables' is required in the definition array");
+        }
+
+        if (isset($definition["columns"])) {
+            $columns = $definition["columns"];
+        } else {
+            throw new Exception("The index 'columns' is required in the definition array");
+        }
+
+        if (!isset($definition["distinct"])) {
+            $sql = "SELECT DISTINCT";
+        } else {
+            $sql = "SELECT";
+        }
+        
+        $bindCounts = $definition["bindCounts"];
+        $escapeChar = $this->_escapeChar;
+
+        /**
+          * Resolve COLUMNS
+          */
+        $sql .= " " . $this->getColumnList($columns, $escapeChar, $bindCounts);
+
+        /**
+          * Resolve FROM
+          */
+        $sql .= " " . $this->getSqlExpressionFrom($tables, $escapeChar) . " WITH (NOLOCK) ";
+
+        /**
+          * Resolve JOINs
+          */
+        if (isset($definition["joins"])) {
+            $sql .= " " . $this->getSqlExpressionJoins($definition["joins"], $escapeChar, $bindCounts);
+        }
+
+        /**
+          * Resolve WHERE
+          */
+        if (isset($definition["where"])) {
+            $sql .= " " . $this->getSqlExpressionWhere($definition['where'], $escapeChar, $bindCounts);
+        }
+        
+        /**
+         * Resolve GROUP BY
+         */
+        if (isset($definition["group"])) {
+            $sql .= " " . $this->getSqlExpressionGroupBy($definition['group'], $escapeChar, $bindCounts);
+        }
+                            
+        /**
+         * Resolve HAVING
+         */
+        if (isset($definition["having"])) {
+            $sql .= " " . $this->getSqlExpressionHaving($definition['having'], $escapeChar, $bindCounts);
+        }
+                
+        /**
+         * Resolve ORDER BY
+         */
+        if (isset($definition["order"])) {
+            $sql .= " " . $this->getSqlExpressionOrderBy($definition['order'], $escapeChar, $bindCounts);
+        }
+        
+        /**
+         * Resolve LIMIT
+         */
+        if (isset($definition["limit"])) {
+            $sql = $this->getSqlExpressionLimit(["sql" => $sql, "value" => $definition['limit']], $escapeChar, $bindCounts);
+        }
+        
+        /**
+         * Resolve FOR UPDATE
+         */
+        if (isset($definition["forUpdate"])) {
+            $sql .= " FOR UPDATE";
+        }
+                                
+        return $sql;                                                                                                                            
     }
 }
