@@ -872,7 +872,7 @@ class Sqlsrv extends \Phalcon\Db\Dialect
             throw new Exception("The index 'columns' is required in the definition array");
         }
 
-        if (!isset($definition["distinct"])) {
+        if (isset($definition["distinct"])) {
             $sql = "SELECT DISTINCT";
         } else {
             $sql = "SELECT";
