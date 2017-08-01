@@ -877,8 +877,12 @@ class Sqlsrv extends \Phalcon\Db\Dialect
         } else {
             $sql = "SELECT";
         }
+
+        $bindCounts = "";
+        if (isset($definition["bindCounts"])) {
+            $bindCounts = $definition["bindCounts"];
+        } 
         
-        $bindCounts = $definition["bindCounts"];
         $escapeChar = $this->_escapeChar;
 
         /**
