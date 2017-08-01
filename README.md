@@ -6,6 +6,7 @@ Phalcon - MS SQL Server (PDO) Adapter
 ## Get started
 
 Install
+
 ```bash
 
 cd <git repo> # go to your git repo
@@ -13,6 +14,7 @@ git submodule add https://github.com/xxx/phalcon-sqlsrv.git <your library path>
 ```
 
 Setting
+
 ```php
 
 //1. load 
