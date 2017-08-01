@@ -17,17 +17,21 @@ Setting
 
 ```php
 
-//1. load 
-'Phalcon\Db'    => __DIR__ . '/../library/phalcon-sqlsrv/Phalcon/Db',
+//1. Namespace (app/config/loader.php)
+$loader -> registerNamespaces(
+    ...
+    'Phalcon\Db'    => __DIR__ . '/../library/phalcon-sqlsrv/Phalcon/Db',
+    )
+) -> register();
 
-//2. new instance
+//2. new instance (app/config/service.php)
 $di->set('db', function() use ($config) {
     return new \Phalcon\Db\Adapter\Pdo\Sqlsrv([
         "host"         => $config->database->host,
         "username"     => $config->database->username,
         "password"     => $config->database->password,
         "dbname"       => $config->database->name,
-        "pdoType"      => 'sqlsrv'  //If you didn't speicif, it will make sqlsrv as default.
+        "pdoType"      => 'Sqlsrv'  //If you didn't speicif, it will make sqlsrv as default.
     ]); 
 });
 
