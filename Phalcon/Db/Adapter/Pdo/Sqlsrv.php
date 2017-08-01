@@ -24,8 +24,8 @@ use Phalcon\Db\Result\PdoSqlsrv as ResultPdo;
 class Sqlsrv extends \Phalcon\Db\Adapter\Pdo implements \Phalcon\Db\AdapterInterface
 {
 
-    protected $_type = 'Sqlsrv';
-    protected $_dialectType = 'Sqlsrv';
+    protected $_type = 'sqlsrv';    //default pdo type(pdo_sqlsrv)
+    protected $_dialectType = 'sqlsrv';
 
     /**
      * This method is automatically called in Phalcon\Db\Adapter\Pdo constructor.
@@ -54,7 +54,11 @@ class Sqlsrv extends \Phalcon\Db\Adapter\Pdo implements \Phalcon\Db\AdapterInter
         $options[\PDO::ATTR_ERRMODE] = \PDO::ERRMODE_EXCEPTION;
         $options[\PDO::ATTR_STRINGIFY_FETCHES] = true;
 
-        $this->_pdo = new \PDO("sqlsrv:server={$descriptor['host']};database={$descriptor['dbname']}", $descriptor['username'], $descriptor['password'], $options);
+        if (isset($descriptor['pdoType'])) {
+            $this->_type = $descriptor['pdoType'];
+        }
+        
+        $this->_pdo = new \PDO("{$this->_type}:server={$descriptor['host']};database={$descriptor['dbname']}", $descriptor['username'], $descriptor['password'], $options);
 
 //        $this->execute('SET QUOTED_IDENTIFIER ON');
 //        $this->execute("SET ANSI_WARNINGS ON ");
