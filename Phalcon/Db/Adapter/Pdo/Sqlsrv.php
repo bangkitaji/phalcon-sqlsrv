@@ -25,7 +25,7 @@ class Sqlsrv extends \Phalcon\Db\Adapter\Pdo implements \Phalcon\Db\AdapterInter
 {
 
     protected $_type = 'sqlsrv';    //default pdo type(pdo_sqlsrv)
-    protected $_dialectType = 'sqlsrv';
+    protected $_dialectType = 'Sqlsrv'; //it is class name(case sensitive)
 
     /**
      * This method is automatically called in Phalcon\Db\Adapter\Pdo constructor.
