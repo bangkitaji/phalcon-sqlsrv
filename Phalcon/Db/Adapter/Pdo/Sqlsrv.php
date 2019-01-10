@@ -24,7 +24,7 @@ use Phalcon\Db\Result\PdoSqlsrv as ResultPdo;
 class Sqlsrv extends \Phalcon\Db\Adapter\Pdo implements \Phalcon\Db\AdapterInterface
 {
 
-    protected $_type = 'sqlsrv';    //default pdo type(pdo_sqlsrv)
+    protected $_type = 'sqlsrv';    //case sensitive or you will get "driver not found"
     protected $_dialectType = 'Sqlsrv'; //it is class name(case sensitive)
 
     /**

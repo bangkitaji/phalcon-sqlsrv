@@ -16,8 +16,8 @@ define ("TEST_DB_MSSQL_CHARSET", 'utf8');
 echo "Quick test" . PHP_EOL;
 testPhpExtension();
 testConnection();
-##testPdo();
-#testPhalconMssqlPdo();
+testPurePdo();
+testPhalconAdapter();
 
 function testPhpExtension(){
     echo "1.Test PHP extension : ";
@@ -42,14 +42,18 @@ function testConnection(){
     //Establishes the connection
     $conn = sqlsrv_connect(TEST_DB_MSSQL_HOST, $connectionOptions);
     if($conn)
-        echo "Connected!" . PHP_EOL;
+        echo "PASS" . PHP_EOL;
+    else
+        echo "Fail" . PHP_EOL;
 }
 
-function testPdo(){
+function testPurePdo(){    
     echo "3.Test PDO: ";
-    $pdo = new \Pdo("sqlsrv:Server=TEST_DB_MSSQL_HOST;Database=".TEST_DB_MSSQL_NAME,TEST_DB_MSSQL_USER, TEST_DB_MSSQL_PASSWD);
+    $pdoType = "sqlsrv"; //lower case or you will get "driver not found"
+    $connStr = "$pdoType:server=".TEST_DB_MSSQL_HOST.";database=".TEST_DB_MSSQL_NAME;
+    $pdo = new \Pdo($connStr,TEST_DB_MSSQL_USER, TEST_DB_MSSQL_PASSWD);
 
-    $tsql= "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_CATALOG='phalcon_test'";
+    $tsql= "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_CATALOG='".TEST_DB_MSSQL_NAME."'";
     $result = $pdo->query($tsql);
     foreach ($pdo->query($tsql) as $row) {  
         //	var_dump($row);
@@ -59,16 +63,21 @@ function testPdo(){
 
 }
 
-function testPhalconMssqlPdo(){
-    echo "4.Test Phalcon PDO: ";
-
-    $phalcon = new MssqlAdapter([
+function testPhalconAdapter(){
+    echo "4.Test Phalcon Adapter: ";
+    $pdo = new MssqlAdapter([
             'host'     => TEST_DB_MSSQL_HOST,
             'username' => TEST_DB_MSSQL_USER,
             'password' => TEST_DB_MSSQL_PASSWD,
             'dbname'   => TEST_DB_MSSQL_NAME,
             //'charset'  => TEST_DB_MSSQL_CHARSET,
             ]);
-    $result = $phalcon->listTables();
+
+    $tsql= "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_CATALOG='".TEST_DB_MSSQL_NAME."'";
+    $result = $pdo->query($tsql);
+    foreach ($pdo->query($tsql) as $row) {  
+        //	var_dump($row);
+    }
+
     echo "PASS" . PHP_EOL;
 }
